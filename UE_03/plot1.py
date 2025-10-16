@@ -12,6 +12,11 @@ fig, ax = plt.subplots()
 plt.plot(x, y_cos, color="blue", linewidth=2, label="Cosinus")
 plt.plot(x, y_sin, color="red", linewidth=2, label="Sinus")
 
+# Titel und Legende
+plt.title("Zwettler")
+plt.legend(loc="upper left")
+
+
 # Layout
 plt.tight_layout()
 plt.show()
