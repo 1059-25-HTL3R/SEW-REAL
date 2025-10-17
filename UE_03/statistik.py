@@ -25,7 +25,6 @@ print(points)
 
 
 
-
 fig, ax = plt.subplots()
 ax.spines['right'].set_color('none')
 ax.spines['top'].set_color('none')
@@ -43,5 +42,10 @@ plt.yticks([1,2,3,4,5,6,7],
 ax.set_title("Zwettler")
 
 
+for point in points:
+    day = point[0]
+    time = point[1]
+    area = points[(day, time)]
 
+    plt.scatter(time, day, s=area * 100, c="blue", alpha=0.5)
 plt.show()
