@@ -6,11 +6,11 @@ import MazeParser
 
 def a_star(mazeinput):
     p = MazeParser.MazeParser(mazeinput)
-    queue = [(p.getstartnode(), 0)]     # nodes to be inspected
+    queue = [(p.getstartnode())]     # nodes to be inspected
     visited = []                        # already inspected nodes
 
     queue = queue.sort()
-    print(p.nodes[1])
+    print(p.getstartnode())
 
 
 
