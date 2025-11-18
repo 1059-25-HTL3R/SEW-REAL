@@ -36,7 +36,11 @@ class MazeParser:
                 for neighbour in neighbours:
                     if neighbour[0] <0 or neighbour[1] < 0 or neighbour[0] > len(line)-1 or neighbour[1] > len(lines)-1:
                         neighbours.remove(neighbour)
-                node = Node((x, y), neighbours)
+                #adding costs to neighbors for current node
+                costneighbours = []
+                for neighbour in neighbours:
+                    costneighbours.append(self.getcost((x,y), neighbour))
+                node = Node((x, y), costneighbours)
                 nodetype = None
                 match symbol:
                     case self.exit_symbol:
@@ -55,9 +59,6 @@ class MazeParser:
                 return node
 
         return None
-
-
-
 
 
     def check_symbols(self,lines):
@@ -103,6 +104,9 @@ class MazeParser:
                 return node
         return None
 
+    def getcost(self,current, neighbour):
+        return neighbour,1
+
 
 class Node:
     def __init__(self, name, neighbours: list):
@@ -112,6 +116,7 @@ class Node:
 
     def getneighbours(self):
         return self.neighbours
+
     def getname(self):
         return self.name
 
