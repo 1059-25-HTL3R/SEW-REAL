@@ -1,117 +1,97 @@
 import heapq
-from typing import List, Tuple
+from typing import List
 
-def a_star(maze_lines:List[str]):
+
+def a_star(maze_lines: List[str]):
+
+    directions = [(-1,0),(1,0),(0,-1),(0,1)]
 
     def get_children(node: Node):
         children = []
-        for direction in directions:
-            new_x = node.x + direction[0]
-            new_y = node.y + direction[1]
-
-            if new_y < 0 or new_y > len(maze_lines):
-                continue
-            if new_x < 0 or new_x > len(maze_lines[0]):
-                continue
-            child_node = Node()
-            child_node.x = new_x
-            child_node.y = new_y
-            children.append(child_node)
+        for dx, dy in directions:
+            nx, ny = node.x + dx, node.y + dy
+            if 0 <= ny < len(maze_lines) and 0 <= nx < len(maze_lines[0]):
+                if maze_lines[ny][nx] != '#':  # '#' = Wand
+                    child = Node(nx, ny)
+                    children.append(child)
         return children
 
-    def get_h(a:Node, b:Node):
+    def get_h(a: Node, b: Node):
         return abs(a.x - b.x) + abs(a.y - b.y)
-    def get_path(node:Node, path:List[Node]):
-        if node.parent is None:
-            return path.insert(0, node)
-        else:
+
+    def get_path(node: Node):
+        path = []
+        while node:
             path.insert(0, node)
-            return get_path(node.parent, path)
+            node = node.parent
+        return path
 
-    maze_lines = maze_lines
-    directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-    open:List[Node] = []
-    closed = []
-
-    start:Node = None
-    escape:Node = None
-
-    for y,line in enumerate(maze_lines):
-        for x,c in enumerate(line):
+    start = escape = None
+    for y, line in enumerate(maze_lines):
+        for x, c in enumerate(line):
             if c == 'x':
-                node = Node()
-                node.x = x
-                node.y = y
-                start = node
-            elif c== 'A':
-                node = Node()
-                node.x = x
-                node.y = y
-                escape = node
+                start = Node(x, y)
+                start.g = 0
+                start.f = 0
+            elif c == 'A':
+                escape = Node(x, y)
 
     if not start or not escape:
-        raise ValueError('start and/or escape is missing')
+        raise ValueError("Start oder Escape fehlt")
 
-    open.append(start)
+    open_heap = []
+    open_dict = {}
+    closed_dict = {}
 
-    while open:
-        print(open)
-        open.sort(key=smallestf)
-        current = open.pop(0)
+    heapq.heappush(open_heap, (start.f, start))
+    open_dict[(start.x, start.y)] = start
 
-        children:List[Node] = get_children(current)
-        for child in children:
+    while open_heap:
+        _, current = heapq.heappop(open_heap)
+        del open_dict[(current.x, current.y)]
+        closed_dict[(current.x, current.y)] = current
+
+        if current.x == escape.x and current.y == escape.y:
+            return get_path(current)
+
+        for child in get_children(current):
             child.parent = current
+            child.g = current.g + 1
+            child.h = get_h(child, escape)
+            child.f = child.g + child.h
 
-            if child.x == escape.x and child.y == escape.y:
-                return get_path(current, [child])
-            else:
-                child.g = current.g + 1
-                child.h = get_h(child, escape)
-                child.f = child.g + child.h
-                skip = False
-                for node in open:
-                    if node.x == child.x and node.y == child.y and node.f < child.f:
-                        skip = True
-                if skip:
-                    continue
-                skip  = False
-                for node in closed:
-                    if node.x == child.x and node.y == child.y and node.f < child.f:
-                        skip = True
-                if skip:
-                    continue
-                else:
-                    open.append(child)
-        closed.append(current)
+            pos = (child.x, child.y)
 
+            if pos in closed_dict and closed_dict[pos].f <= child.f:
+                continue
 
+            if pos in open_dict and open_dict[pos].f <= child.f:
+                continue
 
+            heapq.heappush(open_heap, (child.f, child))
+            open_dict[pos] = child
 
-
-
-class Node:
-    def __init__(self):
-        self.parent: Node = None
-        self.x = None
-        self.y = None
-        self.f = float('inf')
-        self.g = float('inf')
-        self.h = 0
-    def __str__(self):
-        return f'({self.x},{self.y})'
-
-def smallestf(e:Node):
-    return e.f
+    return None
 
 
 def main():
-
-    with open('/mnt/shared/schule/SEW-REAL/UE_04/Mazes/l1.txt') as f:
+    with open('./Mazes/l1.txt') as f:
         maze = f.readlines()
-    print(a_star(maze))
-
+        print(a_star(maze))
 if __name__ == "__main__":
     main()
 
 
+class Node:
+    def __init__(self, x=None, y=None):
+        self.parent: Node = None
+        self.x = x
+        self.y = y
+        self.f = float('inf')
+        self.g = float('inf')
+        self.h = 0
+
+    def __lt__(self, other):
+        return self.f < other.f  # für heapq
+    def __repr__(self):
+        return f'({self.x}, {self.y})'
