@@ -8,6 +8,6 @@ with open(file_path, 'r') as file:
     file_content = file.read()
 
 p = MazeParser.MazeParser(file_content)
-print(p.nodes[0])
-print(p.nodes[len(p.nodes)-1])
+
+p.aStar()
 

@@ -1,3 +1,6 @@
+#MazeParser.py
+from typing import List, Tuple
+
 
 class MazeParser:
 
@@ -6,7 +9,7 @@ class MazeParser:
         self.exit_symbol = None
         self.border_symbol = None
         self.start_symbol = None
-        self.nodes = []
+        self.nodes: List[Node] = []
         self.check_maze()
         self.parse()
 
@@ -102,17 +105,49 @@ class MazeParser:
         for node in self.nodes:
             if node.type == "start":
                 return node
-        return None
+        else:
+            return None
+
+    def getexitnodes(self):
+        out = []
+        for node in self.nodes:
+            if node.type == "exit":
+                out.append(node)
 
     def getcost(self,current, neighbour):
         return neighbour,1
+
+    def cheapestfirst(self, e):
+        return e[1]
+
+
+    def aStar(self):
+        queue:List[Tuple[Node,int]] = [(self.getstartnode(), 0)]
+        visited = []
+
+        while queue:
+            queue.sort(key= self.cheapestfirst)
+            current = queue.pop(0)
+
+            currentChildren = current[0].getneighbours()
+
+            for child in currentChildren:
+                if child.type == "exit":
+                    break
+                else:
+                    cost = self.getcost(current[0], child)
+                if self.nodes.index(child) && :
+
+
+
 
 
 class Node:
     def __init__(self, name, neighbours: list):
         self.name = name
         self.type = None
-        self.neighbours = neighbours
+        self.neighbours: List[Node] = neighbours
+        self.parent = None
 
     def getneighbours(self):
         return self.neighbours
