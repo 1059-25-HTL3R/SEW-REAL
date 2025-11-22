@@ -136,7 +136,7 @@ class MazeParser:
                     break
                 else:
                     cost = self.getcost(current[0], child)
-                if self.nodes.index(child) && :
+
 
 
 
