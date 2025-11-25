@@ -3,7 +3,7 @@ __email__ = "1059@htl.rennweg.at"
 __license__ = "corprate"
 import heapq
 from typing import List
-
+import time
 class Node:
     def __init__(self, x=None, y=None):
         self.parent: Node = None
@@ -100,9 +100,12 @@ def a_star(maze_lines: List[str]):
 
 
 def main():
-    with open('./Mazes/l1.txt') as f:
+    with open('./Mazes/l3.txt') as f:
         maze = f.readlines()
+        start = time.perf_counter()
         print(a_star(maze))
+        end = time.perf_counter()
+        print(end - start)
 if __name__ == "__main__":
     main()
 
