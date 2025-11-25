@@ -1,3 +1,6 @@
+__author__ = "Benjamin Zwettler"
+__email__ = "1059@htl.rennweg.at"
+
 import heapq
 from typing import List
 
